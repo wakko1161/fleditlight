@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block header %}
+<link rel='stylesheet' type="text/css" href="{% static 'style.css' %}">
+
+{% endblock header %}
+
+{% block content %}
+
+<form action = "" method = "POST">{% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">更新する</button>
+    <a href = "{% url 'detail' object.pk %}">詳細に戻る</a>
+</form>
+{% endblock content %}

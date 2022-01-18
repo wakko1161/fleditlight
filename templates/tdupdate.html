@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block header %}
+<link rel='stylesheet' type="text/css" href="{% static 'style.css' %}">
+
+{% endblock header %}
+
+{% block content %}
+<form action = "" method = "POST">{% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">作成する</button>
+    <a href = "{% url 'list' %}">一覧に戻る</a>
+</form>
+{% endblock content %}

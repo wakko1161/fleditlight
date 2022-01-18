@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>FLEDI "T"</title>
+
+    {% block header %}
+    {% endblock header %}
+
+</head>
+  <body>
+    <header>
+      <p>FLExible DIary for Travel</p>
+      <nav>
+        <a href="{% url 'list' %}">旅行一覧/編集</a>
+        <a href= "{% url 'signup' %}">新規登録</a>
+        <a href= "{% url 'login' %}">ログイン</a>
+        <a href= "{% url 'logout' %}">ログアウト</a>
+      </nav>
+    <hr>
+    </header>
+    {% block content %}
+    {% endblock content %}
+
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+  </body>
+</html>

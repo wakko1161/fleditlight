@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block header %}
+<link rel='stylesheet' type="text/css" href="{% static 'style.css' %}">
+
+{% endblock header %}
+
+{% block content %}
+
+<div class = 'container'>
+    <a href="javascript:void(0)" class="btn btn-primary" onclick="window.print();return false;">印刷する</a>
+    <div>
+    <h2>{{ object.tripdate|date:"Y/m/d" }} {{ object.title }}　</h2>
+        <div>
+            <h4>カテゴリ:{{ object.category }}</h4>
+            <h4>予算メモ:<br>　　{{ object.budget }}</h4>
+            <h4>コメントメモ:<br>　　{{ object.content }}</h4>
+            <img class = "pic" src='{{object.images.url}}' width=300><br>
+            <a href = "{% url 'trupdate' object.pk %}" class="btn btn-primary">編集する</a>
+            <a href = "{% url 'trdelete' object.pk %}" class="btn btn-primary">削除する</a>
+            <a href = "{% url 'list' %}" class="btn btn-primary">戻る</a>
+            <br><hr>
+            <h3>やるべきこと　<a href = "{% url 'tdcreate' object.pk %}" class="btn btn-primary">追加する</a></h3>
+            <ol>{% for todo in object.related_tdlist.all %}
+                <li>{{todo.tdtitle}} [優先度:{{todo.tdpriority}}]<br>
+                　詳細 : {{todo.tdcontext}}<br>
+                {% if todo.rootid %}
+                　　@ {{todo.rootid}}
+                {% endif %}
+                </li>
+            <p>　<a href = "{% url 'tddelete' todo.pk %}">削除する</a>　
+                <a href = "{% url 'tdupdate' todo.pk %}">編集する</a></p>
+
+            {% endfor %}</ol>
+        </div><hr>
+
+        <div>
+            {% for route in object.related_root.all|dictsort:"deptime"%}
+            {% if route.earlydep == True %}
+                {% if route.rootcategory == 'イベント' %}
+                    <h3>前{{ route.deptime|date:"H:i" }} {{ route.roottitle }} 開始 </h3>
+                    <h4>　　備考:</h4>
+                    <h5>　　　カテゴリ: {{ route.rootcategory }}</h5>
+                    <h5>　　　{{ route.rootmemo }}</h5>
+                    <h5>　　　@ {{ route.depspot }}</h5>
+                    <h5>　　　やるべきこと:</h5>
+                    {% for todo in object.related_tdlist.all %}
+                    {% if todo.rootid == route %}
+                        <h5>　　　　{{ todo.tdtitle }}</h5>            
+                    {% endif %}
+                    {% endfor %}
+                    <p>　<a href = "{% url 'evdelete' route.pk %}">削除する</a>　
+                        <a href = "{% url 'evupdate' route.pk %}">編集する</a></p>
+                    <h3>　{{ route.arrtime|date:"H:i" }} 終了</h3>
+                {% else %}
+                    <h3>前{{ route.deptime|date:"H:i" }} {{ route.depspot }} 発 </h3>
+                    <h4>　　{{ route.roottitle }} </h4>
+                    <h4>　　備考:</h4>
+                    <h5>　　　カテゴリ: {{ route.rootcategory }}</h5>
+                    <h5>　　　{{ route.rootmemo }}</h5>
+                    <h5>　　　やるべきこと:</h5>
+                    {% for todo in object.related_tdlist.all %}
+                    {% if todo.rootid == route %}
+                        <h5>　　　　{{ todo.tdtitle }}</h5>            
+                    {% endif %}
+                    {% endfor %}
+                    <p>　<a href = "{% url 'rtdelete' route.pk %}">削除する</a>　
+                        <a href = "{% url 'rtupdate' route.pk %}">編集する</a></p>
+                    <h3>　{{ route.arrtime|date:"H:i" }} {{ route.arrspot }} 着</h3>
+                {% endif %}
+            {% endif %}
+            {% endfor %}
+
+            {% for route in object.related_root.all|dictsort:"deptime"%}
+            {% if route.earlydep == False %}
+            {% if route.latearr == False %}
+                {% if route.rootcategory == 'イベント' %}
+                    <h3>　{{ route.deptime|date:"H:i" }} {{ route.roottitle }} 開始 </h3>
+                    <h4>　　備考:</h4>
+                    <h5>　　　カテゴリ: {{ route.rootcategory }}</h5>
+                    <h5>　　　{{ route.rootmemo }}</h5>
+                    <h5>　　　@ {{ route.depspot }}</h5>
+                    <h5>　　　やるべきこと:</h5>
+                    {% for todo in object.related_tdlist.all %}
+                    {% if todo.rootid == route %}
+                        <h5>　　　　{{ todo.tdtitle }}</h5>            
+                    {% endif %}
+                    {% endfor %}
+                    <p>　<a href = "{% url 'evdelete' route.pk %}">削除する</a>　
+                        <a href = "{% url 'evupdate' route.pk %}">編集する</a></p>
+                    <h3>　{{ route.arrtime|date:"H:i" }} 終了</h3>
+                {% else %}
+                    <h3>　{{ route.deptime|date:"H:i" }} {{ route.depspot }} 発 </h3>
+                    <h4>　　{{ route.roottitle }} </h4>
+                    <h4>　　備考:</h4>
+                    <h5>　　　カテゴリ: {{ route.rootcategory }}</h5>
+                    <h5>　　　{{ route.rootmemo }}</h5>
+                    <h5>　　　やるべきこと:</h5>
+                    {% for todo in object.related_tdlist.all %}
+                    {% if todo.rootid == route %}
+                        <h5>　　　　{{ todo.tdtitle }}</h5>            
+                    {% endif %}
+                    {% endfor %}
+                    <p>　<a href = "{% url 'rtdelete' route.pk %}">削除する</a>　
+                        <a href = "{% url 'rtupdate' route.pk %}">編集する</a></p>
+                    <h3>　{{ route.arrtime|date:"H:i" }} {{ route.arrspot }} 着</h3>
+                {% endif %}
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+
+            {% for route in object.related_root.all|dictsort:"deptime"%}
+            {% if route.latearr == True %}
+                {% if route.rootcategory == 'イベント' %}
+                    <h3>　{{ route.deptime|date:"H:i" }} {{ route.roottitle }} 開始 </h3>
+                    <h4>　　備考:</h4>
+                    <h5>　　　カテゴリ: {{ route.rootcategory }}</h5>
+                    <h5>　　　{{ route.rootmemo }}</h5>
+                    <h5>　　　@ {{ route.depspot }}</h5>
+                    <h5>　　　やるべきこと:</h5>
+                    {% for todo in object.related_tdlist.all %}
+                    {% if todo.rootid == route %}
+                        <h5>　　　　{{ todo.tdtitle }}</h5>            
+                    {% endif %}
+                    {% endfor %}
+                    <p>　<a href = "{% url 'evdelete' route.pk %}">削除する</a>　
+                        <a href = "{% url 'evupdate' route.pk %}">編集する</a></p>
+                    <h3>翌{{ route.arrtime|date:"H:i" }} 終了</h3>
+                {% else %}
+                    <h3>　{{ route.deptime|date:"H:i" }} {{ route.depspot }} 発 </h3>
+                    <h4>　　{{ route.roottitle }} </h4>
+                    <h4>　　備考:</h4>
+                    <h5>　　　カテゴリ: {{ route.rootcategory }}</h5>
+                    <h5>　　　{{ route.rootmemo }}</h5>
+                    <h5>　　　やるべきこと:</h5>
+                    {% for todo in object.related_tdlist.all %}
+                    {% if todo.rootid == route %}
+                        <h5>　　　　{{ todo.tdtitle }}</h5>            
+                    {% endif %}
+                    {% endfor %}
+                    <p>　<a href = "{% url 'rtdelete' route.pk %}">削除する</a>　
+                        <a href = "{% url 'rtupdate' route.pk %}">編集する</a></p>
+                    <h3>翌{{ route.arrtime|date:"H:i" }} {{ route.arrspot }} 着</h3>
+                {% endif %}
+            {% endif %}
+            {% endfor %}
+            <hr>
+
+            <a href = "{% url 'rtcreate' object.pk %}">経路を追加する</a>
+            <a href = "{% url 'evcreate' object.pk %}">イベントを追加する</a>
+            <a href = "{% url 'list' %}">戻る</a>
+
+        </div><hr>
+    <h5>管理ID: {{ object.tripid }}</h5>
+    <h5>投稿者: {{ object.author }} / 投稿日: {{ object.postdate|date:"Y年m月d日" }}</h5>
+</div>
+{% endblock content %}
+
